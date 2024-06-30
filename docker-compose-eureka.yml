@@ -52,7 +52,9 @@ services:
     depends_on:
       - customer-management-backend
     environment:
+      - "REACT_APP_CUSTOMER_SELF_SERVICE_BACKEND=http://customer-self-service-backend:8080"
       - "REACT_APP_CUSTOMER_MANAGEMENT_BACKEND=http://customer-management-backend:8100"
+      - "REACT_APP_POLICY_MANAGEMENT_FRONTEND=http://policy-management-frontend:3010"
     ports:
       - "3020:80"
     volumes:
@@ -107,6 +109,7 @@ services:
       - policy-management-backend
     environment:
       - "VUE_APP_POLICY_MANAGEMENT_BACKEND=http://policy-management-backend:8090"
+      - "VUE_APP_CUSTOMER_MANAGEMENT_FRONTEND=http://customer-management-frontend:3020"
     ports:
       - "3010:80"
     volumes:

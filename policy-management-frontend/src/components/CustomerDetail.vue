@@ -131,8 +131,9 @@ export default {
       this.open = false
     },
     openCustomerManagement() {
-      window.location = `http://localhost:3020/customers/${
-        this.customer.customerId
+      window.location = (window.__ENV ? window.__ENV.VUE_APP_CUSTOMER_MANAGEMENT_FRONTEND :
+          process.env.VUE_APP_CUSTOMER_MANAGEMENT_FRONTEND) + `/customers/${
+          this.customer.customerId
       }`
     },
     async loadCustomer(customerId) {
