@@ -14,6 +14,18 @@ FROM openjdk:17-slim-buster
 
 COPY --from=build target/customer-self-service-backend-0.0.1-SNAPSHOT.jar .
 
-EXPOSE 8080
+RUN mkdir -p /usr/local/openjdk-17/conf/management && touch /usr/local/openjdk-17/conf/management/jmxremote.password
+RUN chmod 600 /usr/local/openjdk-17/conf/management/jmxremote.password
 
-ENTRYPOINT ["java", "-jar", "customer-self-service-backend-0.0.1-SNAPSHOT.jar"]
+EXPOSE 8080
+EXPOSE 8851
+
+CMD java \
+ -Dcom.sun.management.jmxremote=true \
+ -Dcom.sun.management.jmxremote.local.only=false \
+ -Dcom.sun.management.jmxremote.authenticate=false \
+ -Dcom.sun.management.jmxremote.ssl=false \
+ -Djava.rmi.server.hostname=localhost \
+ -Dcom.sun.management.jmxremote.port=8851 \
+ -Dcom.sun.management.jmxremote.rmi.port=8851 \
+ -jar customer-self-service-backend-0.0.1-SNAPSHOT.jar
