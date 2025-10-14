@@ -36,6 +36,13 @@ public class InsuranceOptionsEntity implements org.microserviceapipatterns.domai
 	public InsuranceOptionsEntity() {
 	}
 
+	public InsuranceOptionsEntity(Long id, Date startDate, InsuranceType insuranceType, MoneyAmount deductible) {
+		this.id = id;
+		this.startDate = startDate;
+		this.insuranceType = insuranceType;
+		this.deductible = deductible;
+	}
+
 	public InsuranceOptionsEntity(Date startDate, InsuranceType insuranceType, MoneyAmount deductible) {
 		this.startDate = startDate;
 		this.insuranceType = insuranceType;

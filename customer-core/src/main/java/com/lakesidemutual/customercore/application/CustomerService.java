@@ -4,13 +4,16 @@ import com.lakesidemutual.customercore.domain.customer.*;
 import com.lakesidemutual.customercore.infrastructure.CustomerRepository;
 import jakarta.persistence.EntityManager;
 import org.microserviceapipatterns.domaindrivendesign.ApplicationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -20,6 +23,12 @@ import java.util.stream.Collectors;
  */
 @Component
 public class CustomerService implements ApplicationService {
+
+	private final Logger logger = LoggerFactory.getLogger(CustomerService.class);
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	@Autowired
 	private CustomerRepository customerRepository;
 
@@ -62,10 +71,27 @@ public class CustomerService implements ApplicationService {
 	public List<CustomerAggregateRoot> getCustomers(String ids) {
 		List<CustomerId> customerIds = Arrays.stream(ids.split(",")).map(id -> new CustomerId(id.trim())).toList();
 
+		String getCustomersByIdsQuery = "SELECT * FROM customers " +
+				"JOIN customer_profile_entity ON customers.customer_profile_id = customer_profile_entity.id " +
+				"JOIN addresses ON customer_profile_entity.current_address_id = addresses.id " +
+				"WHERE customers.id = ?";
 		List<CustomerAggregateRoot> customers = new ArrayList<>();
 		for (CustomerId customerId : customerIds) {
-			Optional<CustomerAggregateRoot> customer = customerRepository.findById(customerId);
-			customer.ifPresent(customers::add);
+			customers = jdbcTemplate.query(getCustomersByIdsQuery, (resultSet, rowNumber) -> {
+				CustomerProfileEntity customerProfile = new CustomerProfileEntity(
+						resultSet.getString("firstname"),
+						resultSet.getString("lastname"),
+						resultSet.getDate("birthday"),
+						new Address(
+								resultSet.getString("street_address"),
+								resultSet.getString("postal_code"),
+								resultSet.getString("city")
+						),
+						resultSet.getString("email"),
+						resultSet.getString("phone_number")
+				);
+				return new CustomerAggregateRoot(customerId, customerProfile);
+			}, customerId.toString());
 		}
 		return customers;
 	}

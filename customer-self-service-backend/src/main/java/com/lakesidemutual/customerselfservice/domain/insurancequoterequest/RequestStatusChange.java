@@ -30,6 +30,12 @@ public class RequestStatusChange implements ValueObject {
 
 	public RequestStatusChange() {}
 
+	public RequestStatusChange(Long id, Date date, RequestStatus status) {
+		this.id = id;
+		this.date = date;
+		this.status = status;
+	}
+
 	public RequestStatusChange(Date date, RequestStatus status) {
 		Objects.requireNonNull(date);
 		Objects.requireNonNull(status);

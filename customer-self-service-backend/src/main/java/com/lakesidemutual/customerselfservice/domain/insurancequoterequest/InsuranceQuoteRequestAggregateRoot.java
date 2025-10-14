@@ -44,6 +44,16 @@ public class InsuranceQuoteRequestAggregateRoot implements RootEntity {
 
 	public InsuranceQuoteRequestAggregateRoot() {}
 
+	public InsuranceQuoteRequestAggregateRoot(Long id, Date date, List<RequestStatusChange> statusHistory, CustomerInfoEntity customerInfo, InsuranceOptionsEntity insuranceOptions, InsuranceQuoteEntity insuranceQuote, String policyId) {
+		this.id = id;
+		this.date = date;
+		this.statusHistory = statusHistory;
+		this.customerInfo = customerInfo;
+		this.insuranceOptions = insuranceOptions;
+		this.insuranceQuote = insuranceQuote;
+		this.policyId = policyId;
+	}
+
 	public InsuranceQuoteRequestAggregateRoot(Date date, RequestStatus initialStatus, CustomerInfoEntity customerInfo, InsuranceOptionsEntity insuranceOptions, InsuranceQuoteEntity insuranceQuote, String policyId) {
 		this.date = date;
 		List<RequestStatusChange> statusHistory = new ArrayList<>();

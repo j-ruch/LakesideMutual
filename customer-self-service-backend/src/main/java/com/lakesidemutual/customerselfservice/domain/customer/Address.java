@@ -39,6 +39,13 @@ public class Address implements ValueObject {
 		this.city = null;
 	}
 
+	public Address(Long id, String streetAddress, String postalCode, String city) {
+		this.id = id;
+		this.streetAddress = streetAddress;
+		this.postalCode = postalCode;
+		this.city = city;
+	}
+
 	public Address(String streetAddress, String postalCode, String city) {
 		this.streetAddress = streetAddress;
 		this.postalCode = postalCode;

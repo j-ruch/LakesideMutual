@@ -48,6 +48,15 @@ public class CustomerInfoEntity implements org.microserviceapipatterns.domaindri
 		this.billingAddress = null;
 	}
 
+	public CustomerInfoEntity(Long id, CustomerId customerId, String firstname, String lastname, Address contactAddress, Address billingAddress) {
+		this.id = id;
+		this.customerId = customerId;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.contactAddress = contactAddress;
+		this.billingAddress = billingAddress;
+	}
+
 	public CustomerInfoEntity(CustomerId customerId, String firstname, String lastname, Address contactAddress, Address billingAddress) {
 		this.customerId = customerId;
 		this.firstname = firstname;

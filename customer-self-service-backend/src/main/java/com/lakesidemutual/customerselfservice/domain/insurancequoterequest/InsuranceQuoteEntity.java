@@ -39,6 +39,13 @@ public class InsuranceQuoteEntity implements org.microserviceapipatterns.domaind
 	public InsuranceQuoteEntity() {
 	}
 
+	public InsuranceQuoteEntity(Long id, Date expirationDate, MoneyAmount insurancePremium, MoneyAmount policyLimit) {
+		this.id = id;
+		this.expirationDate = expirationDate;
+		this.insurancePremium = insurancePremium;
+		this.policyLimit = policyLimit;
+	}
+
 	public InsuranceQuoteEntity(Date expirationDate, MoneyAmount insurancePremium, MoneyAmount policyLimit) {
 		this.expirationDate = expirationDate;
 		this.insurancePremium = insurancePremium;

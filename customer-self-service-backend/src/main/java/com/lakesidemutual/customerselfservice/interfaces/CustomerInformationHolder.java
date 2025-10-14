@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.lakesidemutual.customerselfservice.application.InsuranceQuoteRequestService;
 import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,6 +56,9 @@ public class CustomerInformationHolder {
 
 	@Autowired
 	private InsuranceQuoteRequestRepository insuranceQuoteRequestRepository;
+
+	@Autowired
+	private InsuranceQuoteRequestService insuranceQuoteRequestService;
 
 	@Autowired
 	private CustomerCoreRemoteProxy customerCoreRemoteProxy;
@@ -110,7 +114,7 @@ public class CustomerInformationHolder {
 	@GetMapping(value = "/{customerId}/insurance-quote-requests")
 	public ResponseEntity<List<InsuranceQuoteRequestDto>> getInsuranceQuoteRequests(
 			@Parameter(description = "the customer's unique id", required = true) @PathVariable CustomerId customerId) {
-		List<InsuranceQuoteRequestAggregateRoot> insuranceQuoteRequests = insuranceQuoteRequestRepository.findByCustomerInfo_CustomerIdOrderByDateDesc(customerId);
+		List<InsuranceQuoteRequestAggregateRoot> insuranceQuoteRequests = insuranceQuoteRequestService.findByCustomerInfo_CustomerIdOrderByDateDesc(customerId);
 		List<InsuranceQuoteRequestDto> insuranceQuoteRequestDtos = insuranceQuoteRequests.stream().map(InsuranceQuoteRequestDto::fromDomainObject).collect(Collectors.toList());
 		return ResponseEntity.ok(insuranceQuoteRequestDtos);
 	}
