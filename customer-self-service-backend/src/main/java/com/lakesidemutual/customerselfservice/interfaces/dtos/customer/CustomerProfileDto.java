@@ -1,5 +1,6 @@
 package com.lakesidemutual.customerselfservice.interfaces.dtos.customer;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 /**
  * CustomerProfileDto is a data transfer object (DTO) that represents the personal data (customer profile) of a customer.
  */
-public class CustomerProfileDto {
+public class CustomerProfileDto implements Serializable {
 	private String firstname;
 	private String lastname;
 	private Date birthday;

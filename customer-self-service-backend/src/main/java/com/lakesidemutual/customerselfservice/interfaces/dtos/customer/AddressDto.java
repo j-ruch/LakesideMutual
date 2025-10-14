@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotEmpty;
 
 import com.lakesidemutual.customerselfservice.domain.customer.Address;
 
+import java.io.Serializable;
+
 /**
  * AddressDto is a data transfer object (DTO) that represents the postal address of a customer.
  * */
-public class AddressDto {
+public class AddressDto implements Serializable {
 	@NotEmpty
 	private String streetAddress;
 

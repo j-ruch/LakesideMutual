@@ -4,6 +4,8 @@ import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
+import java.io.Serializable;
+
 /**
  * The CustomerDto class is a data transfer object (DTO) that represents a single customer.
  * It inherits from the ResourceSupport class which allows us to create a REST representation (e.g., JSON, XML)
@@ -12,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
  *
  * @see <a href="https://docs.spring.io/spring-hateoas/docs/current/reference/html/">Spring HATEOAS - Reference Documentation</a>
  */
-public class CustomerDto extends RepresentationModel {
+public class CustomerDto extends RepresentationModel implements Serializable {
 	private String customerId;
 	@JsonUnwrapped
 	private CustomerProfileDto customerProfile;

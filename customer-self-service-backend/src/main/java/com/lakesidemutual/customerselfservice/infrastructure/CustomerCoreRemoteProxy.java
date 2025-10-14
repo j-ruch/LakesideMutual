@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class CustomerCoreRemoteProxy implements InfrastructureService, CustomerC
     int unsuccessfulAttemptsCounter = 0;
     int fallBackMethodExecutionsCounter = 0;
 
+    @Cacheable(cacheNames = "customer", key = "#customerId.id")
     public CustomerDto getCustomer(CustomerId customerId) {
         try {
             final String url = customerCoreBaseURL + "/customers/" + customerId.getId();
