@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.lakesidemutual.customercore.domain.customer.CustomerAggregateRoot;
 import com.lakesidemutual.customercore.domain.customer.CustomerId;
 import org.microserviceapipatterns.domaindrivendesign.Repository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 /**
  * The CustomerRepository can be used to read and write CustomerAggregateRoot objects from and to the backing database. Spring automatically
@@ -16,4 +19,12 @@ public interface CustomerRepository extends JpaRepository<CustomerAggregateRoot,
 	default CustomerId nextId() {
 		return CustomerId.random();
 	}
+
+	@Override
+	@Query("SELECT customerAggreagateRoot FROM CustomerAggregateRoot customerAggreagateRoot " +
+			"LEFT JOIN FETCH customerAggreagateRoot.customerProfile " +
+			"LEFT JOIN FETCH customerAggreagateRoot.customerProfile.currentAddress " +
+			"LEFT JOIN FETCH customerAggreagateRoot.customerProfile.moveHistory " +
+			"WHERE customerAggreagateRoot.id = :customerId")
+	Optional<CustomerAggregateRoot> findById(CustomerId customerId);
 }

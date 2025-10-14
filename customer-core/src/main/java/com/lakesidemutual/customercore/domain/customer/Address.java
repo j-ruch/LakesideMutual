@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.microserviceapipatterns.domaindrivendesign.ValueObject;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Objects;
  * */
 @Entity
 @Table(name = "addresses")
-public class Address implements ValueObject {
+public class Address implements ValueObject, Serializable {
 	@GeneratedValue
 	@Id
 	private Long id;

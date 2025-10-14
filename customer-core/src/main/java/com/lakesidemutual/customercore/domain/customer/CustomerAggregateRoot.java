@@ -8,13 +8,15 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import org.microserviceapipatterns.domaindrivendesign.RootEntity;
 
+import java.io.Serializable;
+
 /**
  * CustomerAggregateRoot is the root entity of the Customer aggregate. Note that there is
  * no class for the Customer aggregate, so the package can be seen as aggregate.
  */
 @Entity
 @Table(name = "customers")
-public class CustomerAggregateRoot implements RootEntity {
+public class CustomerAggregateRoot implements RootEntity, Serializable {
 
 	@EmbeddedId
 	private CustomerId id;

@@ -5,6 +5,7 @@ import com.lakesidemutual.customercore.infrastructure.CustomerRepository;
 import jakarta.persistence.EntityManager;
 import org.microserviceapipatterns.domaindrivendesign.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class CustomerService implements ApplicationService {
 		return customer;
 	}
 
+	@Cacheable(cacheNames = "customers", key = "#ids")
 	public List<CustomerAggregateRoot> getCustomers(String ids) {
 		List<CustomerId> customerIds = Arrays.stream(ids.split(",")).map(id -> new CustomerId(id.trim())).toList();
 
