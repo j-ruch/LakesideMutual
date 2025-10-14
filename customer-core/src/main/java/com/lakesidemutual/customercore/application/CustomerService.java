@@ -60,14 +60,19 @@ public class CustomerService implements ApplicationService {
 	}
 
 	public List<CustomerAggregateRoot> getCustomers(String ids) {
+		// Reading all customers and filtering in memory is not as efficient as using a findById query
 		List<CustomerId> customerIds = Arrays.stream(ids.split(",")).map(id -> new CustomerId(id.trim())).toList();
+		List<CustomerAggregateRoot> customers = customerRepository.findAll();
+		List<CustomerAggregateRoot> result = new ArrayList<>();
 
-		List<CustomerAggregateRoot> customers = new ArrayList<>();
 		for (CustomerId customerId : customerIds) {
-			Optional<CustomerAggregateRoot> customer = customerRepository.findById(customerId);
-			customer.ifPresent(customers::add);
+			for (CustomerAggregateRoot customer : customers) {
+				if (customer.getId().equals(customerId)) {
+					result.add(customer);
+				}
+			}
 		}
-		return customers;
+		return result;
 	}
 
 	public Page<CustomerAggregateRoot> getCustomers(String filter, int limit, int offset) {
