@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.microserviceapipatterns.domaindrivendesign.Repository;
 import com.lakesidemutual.policymanagement.domain.customer.CustomerId;
 import com.lakesidemutual.policymanagement.domain.insurancequoterequest.InsuranceQuoteRequestAggregateRoot;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * The InsuranceQuoteRequestRepository can be used to read and write InsuranceQuoteRequestAggregateRoot objects from and to the backing database. Spring automatically
@@ -15,5 +16,14 @@ import com.lakesidemutual.policymanagement.domain.insurancequoterequest.Insuranc
  * */
 public interface InsuranceQuoteRequestRepository extends JpaRepository<InsuranceQuoteRequestAggregateRoot, Long>, Repository {
 	List<InsuranceQuoteRequestAggregateRoot> findByCustomerInfo_CustomerId(CustomerId customerId);
+
+	@Query("SELECT insuranceQuoteRequest FROM InsuranceQuoteRequestAggregateRoot insuranceQuoteRequest " +
+			"LEFT JOIN FETCH insuranceQuoteRequest.customerInfo " +
+			"LEFT JOIN FETCH insuranceQuoteRequest.customerInfo.contactAddress " +
+			"LEFT JOIN FETCH insuranceQuoteRequest.customerInfo.billingAddress " +
+			"LEFT JOIN FETCH insuranceQuoteRequest.insuranceOptions " +
+			"LEFT JOIN FETCH insuranceQuoteRequest.insuranceQuote " +
+			"LEFT JOIN FETCH insuranceQuoteRequest.statusHistory " +
+			"ORDER BY insuranceQuoteRequest.date DESC")
 	List<InsuranceQuoteRequestAggregateRoot> findAllByOrderByDateDesc();
 }
