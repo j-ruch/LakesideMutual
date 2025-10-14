@@ -4,6 +4,8 @@ package com.lakesidemutual.policymanagement.interfaces;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class InsuranceQuoteRequestMessageConsumer {
 
 	@Autowired
 	private InsuranceQuoteRequestRepository insuranceQuoteRequestRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@JmsListener(destination = "${insuranceQuoteRequestEvent.queueName}")
 	public void receiveInsuranceQuoteRequest(final Message<InsuranceQuoteRequestEvent> message) {
@@ -48,5 +52,6 @@ public class InsuranceQuoteRequestMessageConsumer {
 
 		InsuranceQuoteRequestAggregateRoot insuranceQuoteAggregateRoot = new InsuranceQuoteRequestAggregateRoot(id, date, status, customerInfo, insuranceOptions, null, null);
 		insuranceQuoteRequestRepository.save(insuranceQuoteAggregateRoot);
+		entityManager.flush();
 	}
 }

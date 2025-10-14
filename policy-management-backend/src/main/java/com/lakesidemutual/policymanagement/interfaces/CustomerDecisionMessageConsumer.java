@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +61,16 @@ public class CustomerDecisionMessageConsumer {
 	@Autowired
 	private CustomerCoreRemoteProxy customerCoreRemoteProxy;
 
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	@JmsListener(destination = "${customerDecisionEvent.queueName}")
 	public void receiveCustomerDecision(final Message<CustomerDecisionEvent> message) {
 		logger.debug("A new CustomerDecisionEvent has been received.");
 		final CustomerDecisionEvent customerDecisionEvent = message.getPayload();
 		final Long id = customerDecisionEvent.getInsuranceQuoteRequestId();
 		final Optional<InsuranceQuoteRequestAggregateRoot> insuranceQuoteRequestOpt = insuranceQuoteRequestRepository.findById(id);
+		entityManager.clear();
 
 		if(!insuranceQuoteRequestOpt.isPresent()) {
 			logger.error("Unable to process a customer decision event with an invalid insurance quote request id.");
@@ -97,6 +103,7 @@ public class CustomerDecisionMessageConsumer {
 				PolicyAggregateRoot policy = createPolicyForInsuranceQuoteRequest(insuranceQuoteRequest);
 				String policyId = policy.getId().getId();
 				policyRepository.save(policy);
+				entityManager.flush();
 				Date policyCreationDate = new Date();
 				insuranceQuoteRequest.finalizeQuote(policyId, policyCreationDate);
 
@@ -126,6 +133,7 @@ public class CustomerDecisionMessageConsumer {
 		}
 
 		insuranceQuoteRequestRepository.save(insuranceQuoteRequest);
+		entityManager.flush();
 	}
 
 	private PolicyAggregateRoot createPolicyForInsuranceQuoteRequest(InsuranceQuoteRequestAggregateRoot insuranceQuoteRequest) {

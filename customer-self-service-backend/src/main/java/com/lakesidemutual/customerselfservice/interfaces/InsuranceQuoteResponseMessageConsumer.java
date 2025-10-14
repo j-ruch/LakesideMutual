@@ -3,6 +3,8 @@ package com.lakesidemutual.customerselfservice.interfaces;
 import java.util.Date;
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class InsuranceQuoteResponseMessageConsumer {
 
 	@Autowired
 	private InsuranceQuoteRequestRepository insuranceQuoteRequestRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@JmsListener(destination = "${insuranceQuoteResponseEvent.queueName}")
 	public void receiveInsuranceQuoteResponse(final Message<InsuranceQuoteResponseEvent> message) {
@@ -34,6 +38,7 @@ public class InsuranceQuoteResponseMessageConsumer {
 		final InsuranceQuoteResponseEvent insuranceQuoteResponseEvent = message.getPayload();
 		final Long id = insuranceQuoteResponseEvent.getInsuranceQuoteRequestId();
 		final Optional<InsuranceQuoteRequestAggregateRoot> insuranceQuoteRequestOpt = insuranceQuoteRequestRepository.findById(id);
+		entityManager.clear(); // Clear the persistence context and detach the loaded entity
 
 		if(!insuranceQuoteRequestOpt.isPresent()) {
 			logger.error("Unable to process an insurance quote response event with an invalid insurance quote request id.");
@@ -54,6 +59,8 @@ public class InsuranceQuoteResponseMessageConsumer {
 			insuranceQuoteRequest.rejectRequest(date);
 		}
 
+		// This save operation will reattach the detached entity and persist the changes
 		insuranceQuoteRequestRepository.save(insuranceQuoteRequest);
+		entityManager.flush(); // Ensure changes are persisted immediately
 	}
 }
