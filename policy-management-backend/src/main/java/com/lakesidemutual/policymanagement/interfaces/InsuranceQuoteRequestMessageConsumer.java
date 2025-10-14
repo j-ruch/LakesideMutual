@@ -34,19 +34,31 @@ public class InsuranceQuoteRequestMessageConsumer {
 
 	@JmsListener(destination = "${insuranceQuoteRequestEvent.queueName}")
 	public void receiveInsuranceQuoteRequest(final Message<InsuranceQuoteRequestEvent> message) {
-		logger.info("A new InsuranceQuoteRequestEvent has been received.");
+		logger.info("Method receiveInsuranceQuoteRequest started.");
+		logger.info("Raw JMS message: {}", message);
 
 		InsuranceQuoteRequestEvent insuranceQuoteRequestEvent = message.getPayload();
+		logger.info("InsuranceQuoteRequestEvent payload: {}", insuranceQuoteRequestEvent);
 		InsuranceQuoteRequestDto insuranceQuoteRequestDto = insuranceQuoteRequestEvent.getInsuranceQuoteRequestDto();
+		logger.info("InsuranceQuoteRequestDto: {}", insuranceQuoteRequestDto);
 		Long id = insuranceQuoteRequestDto.getId();
 		Date date = insuranceQuoteRequestDto.getDate();
+		logger.info("InsuranceQuoteRequestDto id: {}, date: {}", id, date);
 		List<RequestStatusChangeDto> statusHistory = insuranceQuoteRequestDto.getStatusHistory();
+		logger.info("Status history: {}", statusHistory);
 		RequestStatus status = RequestStatus.valueOf(statusHistory.get(statusHistory.size()-1).getStatus());
+		logger.info("Determined status: {}", status);
 
 		CustomerInfoEntity customerInfo = insuranceQuoteRequestDto.getCustomerInfo().toDomainObject();
+		logger.info("CustomerInfoEntity: {}", customerInfo);
 		InsuranceOptionsEntity insuranceOptions = insuranceQuoteRequestDto.getInsuranceOptions().toDomainObject();
+		logger.info("InsuranceOptionsEntity: {}", insuranceOptions);
 
 		InsuranceQuoteRequestAggregateRoot insuranceQuoteAggregateRoot = new InsuranceQuoteRequestAggregateRoot(id, date, status, customerInfo, insuranceOptions, null, null);
+		logger.info("Created InsuranceQuoteRequestAggregateRoot: {}", insuranceQuoteAggregateRoot);
+		logger.info("Saving new Insurance Quote Request with id '{}' and status '{}'", insuranceQuoteAggregateRoot.getId(), insuranceQuoteAggregateRoot.getStatus());
 		insuranceQuoteRequestRepository.save(insuranceQuoteAggregateRoot);
+		logger.info("Insurance Quote Request with id '{}' saved.", insuranceQuoteAggregateRoot.getId());
+		logger.info("Method receiveInsuranceQuoteRequest ended.");
 	}
 }
