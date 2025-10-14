@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package customercore;
+option java_multiple_files=true;
+option java_package="com.lakesidemutual.customercore.grpc";
+option java_outer_classname="CustomerCoreProto";
+
+service CustomerCoreProtoService {
+  rpc getCustomerById(CustomerCoreProtoRequestDto) returns (CustomerCoreProtoResponseDto);
+}
+
+message CustomerCoreProtoRequestDto {
+    string customerId=1;
+}
+
+message CustomerCoreProtoResponseDto {
+  string customerId=1;
+  CustomerProfileProtoDto customerProfile=2;
+}
+
+message CustomerProfileProtoDto {
+  string firstname=1;
+  string lastname=2;
+  google.protobuf.Timestamp birthday=3;
+  AddressProtoDto address=4;
+  string email=5;
+  string phoneNumber=6;
+  repeated AddressProtoDto moveHistory=7;
+}
+
+message AddressProtoDto {
+  string streetAddress=1;
+  string postalCode=2;
+  string city=3;
+}

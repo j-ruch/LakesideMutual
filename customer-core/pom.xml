@@ -34,6 +34,11 @@
 		<commons-text.version>1.14.0</commons-text.version>
 		<e-adr.version>1.0.0</e-adr.version>
 		<guava.version>33.5.0-jre</guava.version>
+		<!-- gRPC Dependency Versions -->
+		<grpc.version>1.70.0</grpc.version>
+		<protobuf-java.version>3.25.6</protobuf-java.version>
+		<spring-grpc.version>0.5.0</spring-grpc.version>
+		<grpc.server.version>3.1.0.RELEASE</grpc.server.version>
 		<!-- Test Dependency Versions -->
 		<archunit-junit5.version>1.4.1</archunit-junit5.version>
 	</properties>
@@ -44,6 +49,13 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.grpc</groupId>
+				<artifactId>spring-grpc-dependencies</artifactId>
+				<version>${spring-grpc.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -157,6 +169,44 @@
 			<version>${guava.version}</version>
 		</dependency>
 
+		<!-- gRPC Dependencies -->
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.devh</groupId>
+			<artifactId>grpc-server-spring-boot-starter</artifactId>
+			<version>${grpc.server.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty-shaded</artifactId>
+			<version>${grpc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-protobuf</artifactId>
+			<version>${grpc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-stub</artifactId>
+			<version>${grpc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-census</artifactId>
+			<version>${grpc.version}</version>
+		</dependency>
+
+		<!-- Protobuf Java -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf-java.version}</version>
+		</dependency>
+
 		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -178,6 +228,42 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.7.1</version>
+				<executions>
+					<execution>
+						<id>initialize</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>detect</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>0.6.1</version>
+				<configuration>
+					<protocArtifact>com.google.protobuf:protoc:${protobuf-java.version}:exe:${os.detected.classifier}</protocArtifact>
+					<pluginId>grpc-java</pluginId>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+							<goal>compile-custom</goal>
+						</goals>
+						<configuration>
+							<pluginParameter>jakarta_omit,@generated=omit</pluginParameter>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

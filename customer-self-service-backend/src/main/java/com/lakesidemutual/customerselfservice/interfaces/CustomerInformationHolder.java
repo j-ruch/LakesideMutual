@@ -3,9 +3,11 @@ package com.lakesidemutual.customerselfservice.interfaces;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.lakesidemutual.customercore.grpc.CustomerCoreProtoResponseDto;
+import com.lakesidemutual.customerselfservice.infrastructure.CustomerCoreRemoteGrpcProxy;
 import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +61,9 @@ public class CustomerInformationHolder {
 	@Autowired
 	private CustomerCoreRemoteProxy customerCoreRemoteProxy;
 
+	@Autowired
+	private CustomerCoreRemoteGrpcProxy customerCoreRemoteGrpcProxy;
+
 	@Operation(summary = "Change a customer's address.")
 	@PreAuthorize("isAuthenticated()")
 	@PutMapping(value = "/{customerId}/address")
@@ -75,7 +80,9 @@ public class CustomerInformationHolder {
 			Authentication authentication,
 			@Parameter(description = "the customer's unique id", required = true) @PathVariable CustomerId customerId) {
 
-		CustomerDto customer = customerCoreRemoteProxy.getCustomer(customerId);
+		CustomerCoreProtoResponseDto customerCoreProtoResponseDto = customerCoreRemoteGrpcProxy.getCustomerById(customerId.getId());
+		CustomerDto customer = createCustomerResponseDto(customerCoreProtoResponseDto, authentication);
+
 		if(customer == null) {
 			final String errorMessage = "Failed to find a customer with id '" + customerId.getId() + "'.";
 			logger.info(errorMessage);
@@ -127,5 +134,28 @@ public class CustomerInformationHolder {
 		// and add our own:
 		customerDto.add(selfLink);
 		customerDto.add(updateAddressLink);
+	}
+
+	private CustomerDto createCustomerResponseDto(CustomerCoreProtoResponseDto customer, Authentication authentication) {
+		final Set<String> includedFields = Collections.emptySet();
+		CustomerDto customerResponseDto = new CustomerDto(includedFields, customer);
+		Link selfLink = linkTo(
+				methodOn(CustomerInformationHolder.class).getCustomer(authentication, new CustomerId(customer.getCustomerId())))
+				.withSelfRel();
+
+		Link updateAddressLink = linkTo(methodOn(CustomerInformationHolder.class).changeAddress(new CustomerId(customer.getCustomerId()), null))
+				.withRel("address.change");
+
+		customerResponseDto.add(selfLink);
+		customerResponseDto.add(updateAddressLink);
+		return customerResponseDto;
+	}
+
+	private Set<String> getIncludedFields(String fields) {
+		if (fields.trim().isEmpty()) {
+			return Collections.emptySet();
+		} else {
+			return new HashSet<>(Arrays.asList(fields.split(",")));
+		}
 	}
 }
