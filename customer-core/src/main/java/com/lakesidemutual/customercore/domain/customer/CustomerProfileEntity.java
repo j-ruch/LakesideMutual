@@ -1,12 +1,8 @@
 package com.lakesidemutual.customercore.domain.customer;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,14 +13,10 @@ import java.util.Objects;
 /**
  * CustomerProfileEntity is an entity that contains the personal data (customer profile) of a CustomerAggregateRoot.
  */
-@Entity
+@Document
 public class CustomerProfileEntity implements Serializable, org.microserviceapipatterns.domaindrivendesign.Entity {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String firstname;
 
@@ -36,14 +28,12 @@ public class CustomerProfileEntity implements Serializable, org.microserviceapip
      * The usage of the javax.persistance annotations breaks the strict layering. We do this deliberately here, because the relatively small
      * size of this application does not warrant the additional complexity of having a separate infrastructure data model (yet).
      */
-    @OneToOne(cascade = CascadeType.ALL)
     private Address currentAddress;
 
     private String email;
 
     private String phoneNumber;
 
-    @OneToMany(cascade = CascadeType.ALL)
     private Collection<Address> moveHistory;
 
     public CustomerProfileEntity() {

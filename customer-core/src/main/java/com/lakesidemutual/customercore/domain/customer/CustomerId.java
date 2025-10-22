@@ -1,6 +1,5 @@
 package com.lakesidemutual.customercore.domain.customer;
 
-import jakarta.persistence.Embeddable;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.microserviceapipatterns.domaindrivendesign.EntityIdentifier;
 import org.microserviceapipatterns.domaindrivendesign.ValueObject;
@@ -11,7 +10,6 @@ import java.util.Objects;
 /**
  * A CustomerId is a value object that is used to represent the unique id of a customer.
  */
-@Embeddable
 public class CustomerId implements Serializable, ValueObject, EntityIdentifier<String> {
 	private static final long serialVersionUID = 1L;
 

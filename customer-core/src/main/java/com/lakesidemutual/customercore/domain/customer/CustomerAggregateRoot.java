@@ -1,25 +1,20 @@
 package com.lakesidemutual.customercore.domain.customer;
 
 import io.github.adr.embedded.MADR;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import org.microserviceapipatterns.domaindrivendesign.RootEntity;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * CustomerAggregateRoot is the root entity of the Customer aggregate. Note that there is
  * no class for the Customer aggregate, so the package can be seen as aggregate.
  */
-@Entity
-@Table(name = "customers")
+@Document
 public class CustomerAggregateRoot implements RootEntity {
 
-	@EmbeddedId
+	@Id
 	private CustomerId id;
 
-	@OneToOne(cascade = CascadeType.ALL)
 	private CustomerProfileEntity customerProfile;
 
 	public CustomerAggregateRoot() {
